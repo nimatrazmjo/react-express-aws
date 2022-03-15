@@ -4,7 +4,7 @@ services:
 before_install: 
   - docker build -t razmjo/react-test -f ./client/Dockerfile.dev ./client
 script: 
-  - docker run razmjo/react-test npm run test
+  - docker run -e CI=true razmjo/react-test npm run test
 after_success:
   - docker build -t razmjo/multi-client ./client
   - docker build -t razmjo/multi-nginx ./nginx
