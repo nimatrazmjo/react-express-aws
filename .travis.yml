@@ -1,0 +1,19 @@
+sudo: required
+services:
+  - docker
+before_install: 
+  - docker build -t razmjo/react-test -f ./client/Dockerfile.dev ./client
+script: 
+  - docker run razmjo/react-test npm run test
+after_success:
+  - docker build -t razmjo/multi-client ./client
+  - docker build -t razmjo/multi-nginx ./nginx
+  - docker build -t razmjo/multi-server ./server
+  - docker build -t razmjo/multi-worker ./worker
+  # take the iamges and push to docker hub or ecr
+  - echo "$DOCKER_PASSWORD" | docker login -u "${DOCKER_ID}" --password-stdin
+  # take those images and push them to docker hub
+  - docker push razmjo/multi-client
+  - docker push razmjo/multi-nginx
+  - docker push razmjo/multi-server
+  - docker push razmjo/multi-worker
